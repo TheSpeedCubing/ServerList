@@ -1,0 +1,17 @@
+name:
+  enable: true
+  value: '&aname'
+forgeicon:
+  enable: true
+  value: 'VANILLA'
+protocol:
+  enable: true
+  value: 2
+motd:
+  enable: true
+  value: '&bmotd'
+players:
+  enable: true
+  value:
+  - '&cplayer1'
+  - '&dplayer2'
