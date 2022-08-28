@@ -9,7 +9,8 @@ protocol:
   value: 2
 motd:
   enable: true
-  value: '&bmotd'
+  line1: '&amotd1'
+  line2: '&bmotd2'
 players:
   enable: true
   value:
