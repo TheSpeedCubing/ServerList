@@ -1,0 +1,6 @@
+name: ServerList
+main: top.speedcubing.serverlist.ServerListSpigot
+version: 1.0
+commands:
+  serverlist:
+    usage: /serverlist

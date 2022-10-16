@@ -1,2 +1,2 @@
 name: ServerList
-main: top.speedcubing.serverlist.bungee.ServerListBungee
+main: top.speedcubing.serverlist.ServerListBungee
