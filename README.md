@@ -1,3 +1,3 @@
 # ServerList
-A simple bungeecord plugin for serverlist
-(motd,playerlist,version,protocol) display.
+A simple spigot 1.8.8/bungeecord plugin<br>
+for displaying motd,playerlist,version,protocol.
