@@ -12,7 +12,6 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
-import top.speedcubing.serverlist.ServerListConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +34,13 @@ public class ServerListBungee extends Plugin implements Listener {
             ServerListConfig.Protocol = config.getBoolean("protocol.enable");
             ServerListConfig.protocol = config.getInt("protocol.value");
             ServerListConfig.Motd = config.getBoolean("motd.enable");
-            ServerListConfig.motd = ChatColor.translateAlternateColorCodes('&', config.getString("motd.line1") + "\n" + config.getString("motd.line2"));
+            StringBuilder motd = new StringBuilder();
+            for (String s : config.getStringList("motd.value")) {
+                motd.append(ChatColor.translateAlternateColorCodes('&', s)).append("\n");
+            }
+            if (motd.length() != 0)
+                motd = new StringBuilder(motd.substring(0, motd.length() - 1));
+            ServerListConfig.motd = motd.toString();
             ServerListConfig.Players = config.getBoolean("players.enable");
 
             List<String> players = config.getStringList("players.value");

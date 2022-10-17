@@ -13,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import top.speedcubing.serverlist.ServerListConfig;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -35,7 +34,13 @@ public class ServerListSpigot extends JavaPlugin implements Listener {
         ServerListConfig.Protocol = config.getBoolean("protocol.enable");
         ServerListConfig.protocol = config.getInt("protocol.value");
         ServerListConfig.Motd = config.getBoolean("motd.enable");
-        ServerListConfig.motd = ChatColor.translateAlternateColorCodes('&', config.getString("motd.line1") + "\n" + config.getString("motd.line2"));
+        StringBuilder motd = new StringBuilder();
+        for (String s : config.getStringList("motd.value")) {
+            motd.append(ChatColor.translateAlternateColorCodes('&', s)).append("\n");
+        }
+        if (motd.length() != 0)
+            motd = new StringBuilder(motd.substring(0, motd.length() - 1));
+        ServerListConfig.motd = motd.toString();
         ServerListConfig.Players = config.getBoolean("players.enable");
 
         List<String> players = config.getStringList("players.value");
@@ -77,8 +82,8 @@ public class ServerListSpigot extends JavaPlugin implements Listener {
         field.setAccessible(true);
         for (Object manager : networkManagers.toArray()) {
             Channel channel = (Channel) field.get(manager);
-            if (channel.pipeline().get("speedcubing-serverping") == null) {
-                channel.pipeline().addBefore("packet_handler", "speedcubing-serverping", new ChannelDuplexHandler() {
+            if (channel.pipeline().get("speedcubingServerList") == null) {
+                channel.pipeline().addBefore("packet_handler", "speedcubingServerList", new ChannelDuplexHandler() {
                     @Override
                     public void write(ChannelHandlerContext channel, Object byteBuf, ChannelPromise promise) throws Exception {
                         if (byteBuf instanceof PacketStatusOutServerInfo) {
