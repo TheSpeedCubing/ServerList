@@ -23,26 +23,29 @@ import java.util.UUID;
 public class ServerListSpigot extends JavaPlugin implements Listener {
     List<?> networkManagers;
     ServerPing.ServerPingPlayerSample playerlist;
+    String name;
+    String forge;
+    int protocol;
+    ChatComponentText motd;
 
     public void reload() {
         reloadConfig();
         FileConfiguration config = getConfig();
         ServerListConfig.Name = config.getBoolean("name.enable");
-        ServerListConfig.name = ChatColor.translateAlternateColorCodes('&', config.getString("name.value"));
         ServerListConfig.Forge = config.getBoolean("forgeicon.enable");
-        ServerListConfig.forge = config.getString("forgeicon.value");
         ServerListConfig.Protocol = config.getBoolean("protocol.enable");
-        ServerListConfig.protocol = config.getInt("protocol.value");
         ServerListConfig.Motd = config.getBoolean("motd.enable");
-        StringBuilder motd = new StringBuilder();
-        for (String s : config.getStringList("motd.value")) {
-            motd.append(ChatColor.translateAlternateColorCodes('&', s)).append("\n");
-        }
-        if (motd.length() != 0)
-            motd = new StringBuilder(motd.substring(0, motd.length() - 1));
-        ServerListConfig.motd = motd.toString();
         ServerListConfig.Players = config.getBoolean("players.enable");
-
+        name = ChatColor.translateAlternateColorCodes('&', config.getString("name.value"));
+        forge = config.getString("forgeicon.value");
+        protocol = config.getInt("protocol.value");
+        StringBuilder m = new StringBuilder();
+        for (String s : config.getStringList("motd.value")) {
+            m.append(ChatColor.translateAlternateColorCodes('&', s)).append("\n");
+        }
+        if (m.length() != 0)
+            m = new StringBuilder(m.substring(0, m.length() - 1));
+        motd = new ChatComponentText(m.toString());
         List<String> players = config.getStringList("players.value");
         int size = players.size();
         playerlist = new ServerPing.ServerPingPlayerSample(1, 1);
@@ -56,6 +59,7 @@ public class ServerListSpigot extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginCommand("serverlist").setExecutor(((commandSender, command, s, strings) -> {
             reload();
+            commandSender.sendMessage("ServerList reloaded.");
             return true;
         }));
         try {
@@ -91,11 +95,11 @@ public class ServerListSpigot extends JavaPlugin implements Listener {
                             Field serverPing = packet.getClass().getDeclaredField("b");
                             serverPing.setAccessible(true);
                             ServerPing ping = (ServerPing) serverPing.get(packet);
-                            ping.setServerInfo(new ServerPing.ServerData(ServerListConfig.Name ? ServerListConfig.name : ping.c().a(), ServerListConfig.Protocol ? ServerListConfig.protocol : ping.c().b()));
+                            ping.setServerInfo(new ServerPing.ServerData(ServerListConfig.Name ? name : ping.c().a(), ServerListConfig.Protocol ? protocol : ping.c().b()));
                             if (ServerListConfig.Forge)
-                                ping.setFavicon(ServerListConfig.forge);
+                                ping.setFavicon(forge);
                             if (ServerListConfig.Motd)
-                                ping.setMOTD(new ChatComponentText(ServerListConfig.motd));
+                                ping.setMOTD(motd);
                             if (ServerListConfig.Players)
                                 ping.setPlayerSample(playerlist);
                         }

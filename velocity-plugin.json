@@ -1,0 +1,10 @@
+{
+  "id": "serverlist",
+  "name": "ServerList",
+  "version": "1.0-SNAPSHOT",
+  "authors": [
+    "speedcubing"
+  ],
+  "dependencies": [],
+  "main": "top.speedcubing.serverlist.ServerListVelocity"
+}

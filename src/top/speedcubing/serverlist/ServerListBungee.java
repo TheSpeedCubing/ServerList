@@ -23,26 +23,30 @@ import java.util.UUID;
 
 public class ServerListBungee extends Plugin implements Listener {
     ServerPing.PlayerInfo[] playerlist;
+    String name;
+    String forge;
+    int protocol;
+    String motd;
+
 
     public void reload() {
         try {
             Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
             ServerListConfig.Name = config.getBoolean("name.enable");
-            ServerListConfig.name = ChatColor.translateAlternateColorCodes('&', config.getString("name.value"));
             ServerListConfig.Forge = config.getBoolean("forgeicon.enable");
-            ServerListConfig.forge = config.getString("forgeicon.value");
             ServerListConfig.Protocol = config.getBoolean("protocol.enable");
-            ServerListConfig.protocol = config.getInt("protocol.value");
             ServerListConfig.Motd = config.getBoolean("motd.enable");
-            StringBuilder motd = new StringBuilder();
-            for (String s : config.getStringList("motd.value")) {
-                motd.append(ChatColor.translateAlternateColorCodes('&', s)).append("\n");
-            }
-            if (motd.length() != 0)
-                motd = new StringBuilder(motd.substring(0, motd.length() - 1));
-            ServerListConfig.motd = motd.toString();
             ServerListConfig.Players = config.getBoolean("players.enable");
-
+            name = ChatColor.translateAlternateColorCodes('&', config.getString("name.value"));
+            forge = config.getString("forgeicon.value");
+            protocol = config.getInt("protocol.value");
+            StringBuilder m = new StringBuilder();
+            for (String s : config.getStringList("motd.value")) {
+                m.append(ChatColor.translateAlternateColorCodes('&', s)).append("\n");
+            }
+            if (m.length() != 0)
+                m = new StringBuilder(m.substring(0, m.length() - 1));
+            motd = m.toString();
             List<String> players = config.getStringList("players.value");
             int size = players.size();
             playerlist = new ServerPing.PlayerInfo[size];
@@ -82,13 +86,13 @@ public class ServerListBungee extends Plugin implements Listener {
     public void onProxyPing(ProxyPingEvent e) {
         ServerPing server = e.getResponse();
         if (ServerListConfig.Name)
-            server.getVersion().setName(ServerListConfig.name);
+            server.getVersion().setName(name);
         if (ServerListConfig.Forge)
-            server.getModinfo().setType(ServerListConfig.forge);
+            server.getModinfo().setType(forge);
         if (ServerListConfig.Protocol)
-            server.getVersion().setProtocol(ServerListConfig.protocol);
+            server.getVersion().setProtocol(protocol);
         if (ServerListConfig.Motd)
-            server.setDescription(ServerListConfig.motd);
+            server.setDescription(motd);
         if (ServerListConfig.Players)
             server.getPlayers().setSample(playerlist);
     }
